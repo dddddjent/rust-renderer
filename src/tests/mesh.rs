@@ -1,5 +1,5 @@
 #[test]
-fn parse_mesh() {
+fn deserialize_mesh() {
     use crate::world::mesh::Mesh;
 
     let data_str = "
@@ -10,5 +10,12 @@ fn parse_mesh() {
                     \"radius\": 0.2\
 				}\
 			}";
-    let mesh: Box<dyn Mesh> = serde_json::from_str(data_str).unwrap();
+
+    match serde_json::from_str(data_str).unwrap() {
+        Mesh::Sphere { data } => {
+            assert_eq!(data.center, [255f32, 10f32, 88f32]);
+            assert_eq!(data.radius, 0.2f32);
+        }
+        _ => panic!("Not a sphere?"),
+    };
 }
