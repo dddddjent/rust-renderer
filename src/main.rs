@@ -1,13 +1,12 @@
 use self::data_processor::DataProcessor;
 use self::renderer::Renderer;
 
-mod camera;
 mod consumer;
 mod data_processor;
 mod renderer;
+mod tests;
 mod util;
 mod world;
-mod tests;
 
 fn init_render_system<DP: DataProcessor, RR: Renderer>(data_processor: &mut DP, renderer: &mut RR) {
 }
