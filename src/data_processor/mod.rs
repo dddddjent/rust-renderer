@@ -1,10 +1,10 @@
+use crate::world::world::World;
+
+pub mod direct;
+
 pub trait DataProcessor {
-    fn new() -> Self;
-    fn init(&mut self) -> &mut Self;
-    fn read<E>(data_path: &str) -> Result<(), E>;
-    fn set_args();
-    fn set_buffer();
-    fn process<E>() -> Result<(), E>;
-    fn get();
-    fn write(output_path: &str);
+    fn process(&mut self,config_path:&str,args:&serde_json::Value) -> Result<(), ()>;
+    fn get_erase(&mut self) -> World;
+    fn get(&mut self) -> &mut World;
+    fn write(&self, output_path: &str);
 }

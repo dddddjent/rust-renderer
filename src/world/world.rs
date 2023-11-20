@@ -13,10 +13,25 @@ pub struct WorldObjects {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct World {
-    pub camera: Camera,
+    pub camera: Option<Camera>,
     pub objects: Vec<WorldObjects>,
 }
 
 impl World {
-    pub fn merge_world(&mut self, another_world: World) {}
+    pub fn merge_world(&mut self, mut another_world: World) {
+        match another_world.camera {
+            Some(_) => match self.camera {
+                Some(_) => panic!("More than one camera for this project"),
+                None => self.camera = another_world.camera,
+            },
+            None => (),
+        };
+        self.objects.append(&mut another_world.objects);
+    }
+    pub fn new() -> Self {
+        World {
+            camera: None,
+            objects: vec![],
+        }
+    }
 }
