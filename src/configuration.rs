@@ -34,7 +34,7 @@ pub struct Configuration {
     pub data_processor: Vec<DataProcessorConfiguration>,
     pub renderer: Option<RendererConfiguration>,
     pub consumer: Option<ConsumerConfiguration>,
-    pub write_only: Option<bool>,
+    pub process_only_output_path: Option<String>,
 }
 
 impl Configuration {

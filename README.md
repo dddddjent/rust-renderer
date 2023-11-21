@@ -32,6 +32,8 @@
   - The `world` is produced inside the `data_process` stage, but it's passed out directly, so `data_processor` and `Configuration` should not contain any state or memory
   - Consumer should be able to use the configuration to change the `World`, `Renderer` dynamically. (Pass it to the consumer?)
   - It should only use the trait methods, so you should never need to change the implementations of these three stages
+- Process only is interesting. This is an optional arg. If it's not `None`, then you must be specifying the process_only flag, thus only the output path is needed.
+  - So either no this flag for the whole pipeline or with this and only process the data
 
 ### Modify the Configuration
 
