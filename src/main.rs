@@ -18,6 +18,10 @@ fn main() {
     let configuration = Configuration::new(config_path.to_str().unwrap());
 
     let world = configuration.data_process_stage();
-    let data_processor = DirectDataProcessor::new();
-    data_processor.write("./output_world.json", &world);
+    if let Some(true) = configuration.write_only {
+        DirectDataProcessor::new().write("./output_world.json", &world);
+        return;
+    }
+
+    println!("Successfully finished!");
 }

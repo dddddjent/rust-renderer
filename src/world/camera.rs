@@ -12,6 +12,7 @@ pub struct Camera {
 }
 
 impl Camera {
+    #[allow(dead_code)]
     pub fn new() -> Camera {
         Camera {
             position: Vector3f::zeros(),

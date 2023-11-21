@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
-use std::path::Path;
 
 use crate::data_processor::direct::DirectDataProcessor;
 use crate::data_processor::DataProcessor;
@@ -33,8 +32,9 @@ pub struct Configuration {
     #[serde(skip_deserializing)]
     config_path: String,
     pub data_processor: Vec<DataProcessorConfiguration>,
-    pub renderer: RendererConfiguration,
-    pub consumer: ConsumerConfiguration,
+    pub renderer: Option<RendererConfiguration>,
+    pub consumer: Option<ConsumerConfiguration>,
+    pub write_only: Option<bool>,
 }
 
 impl Configuration {
