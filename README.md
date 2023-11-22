@@ -96,6 +96,15 @@ the [project_path]/config.json. So:
 
 - create a new processor under the data_processor folder
 - A struct impls `new()` and `DataProcessor` trait
+- OBJ:
+  - it's only a 3d mesh, so it should be parsed with direct processor
+  - Custom deserialization for triangle mesh
+- FBX:
+  - Custom parser
+- GLTF:
+  - Custom parser
+- USD:
+  - Custom parser
 
 ### DataProcessors
 
@@ -142,6 +151,10 @@ Structure
 2. Create a struct for this new mesh
 3. Make sure the serde methods (add custom ones inside the serde.rs for now)
 
+- The triangle type should have indices, vertices, normals, uv-coordinates
+- So for triangle, I only want to support direct inner format or OBJ
+  - have to use custom way to deserialize it
+
 ### Material
 
 **TODO**: Create a folder under the world folder for this, add serde.rs for this type
@@ -155,3 +168,11 @@ Structure
 1. Write the new one (`Diffuse { data: Box<DiffuseMaterial> },`) inside the enum
 2. Create a struct for this new material
 3. Make sure the serde methods (add custom ones inside the serde.rs for now)
+
+- TexturedMaterial:
+  - optional color, texture map, normal map, displacement maps
+  - Texture should be a separate enum (with inner structs)
+    - DXT
+    - ETC
+    - ...
+  - for each map, `"texture_map":{"type":"DXT","path":"..."}`
