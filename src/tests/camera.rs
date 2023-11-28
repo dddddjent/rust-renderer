@@ -21,7 +21,7 @@ fn deserialize_camera() {
         up: Vector3f::new([0f32, 0f32, 1f32]),
         distance: 1f32,
         fov: 60f32,
-        size: [1024, 1024],
+        size: (1024, 1024),
     };
     assert_eq!(camera.position, camera_result.position);
     assert_eq!(camera.direction, camera_result.direction);

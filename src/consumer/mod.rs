@@ -1,13 +1,12 @@
-// use crate::data_processor::DataProcessor;
+use crate::renderer::Renderer;
+use crate::world::world::World;
 // use crate::renderer::Renderer;
 
-mod image;
+pub mod image;
 
-// pub trait Consumer {
-//     fn new() -> Self;
-//     fn set_args();
-//     fn set_data_processor<DP: DataProcessor>(data_processor: DP);
-//     fn set_renderer<RR: Renderer>(renderer: RR);
-//     fn init();
-//     fn run();
-// }
+pub trait Consumer {
+    fn set_args(&mut self, config_path: &str, args: &serde_json::Value);
+    fn set_world(&mut self, world: World);
+    fn set_renderer(&mut self, renderer: Box<dyn Renderer>);
+    fn run(&mut self);
+}

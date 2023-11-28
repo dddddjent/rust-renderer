@@ -17,7 +17,7 @@ mod world;
 
 fn main() {
     TermLogger::init(
-        LevelFilter::Info,
+        LevelFilter::Debug,
         Config::default(),
         TerminalMode::Mixed,
         ColorChoice::Auto,
@@ -36,6 +36,10 @@ fn main() {
         info!("Finished successfully!");
         return;
     }
+
+    let renderer = configuration.renderer_stage();
+    let mut consumer = configuration.consumer_stage(world, renderer);
+    consumer.run();
 
     info!("Finished successfully!");
 }

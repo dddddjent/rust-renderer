@@ -1,7 +1,11 @@
+use simple_math::Vector3u8;
+
+use crate::world::world::World;
+
+pub mod basic_path_tracer;
+pub mod naive_renderer;
+
 pub trait Renderer {
-    fn new() -> Self;
-    fn set_args();
-    fn set_camera();
-    fn set_world();
-    fn step();
+    fn set_args(&mut self, args: &serde_json::Value);
+    fn step(&mut self, world: &World) -> Vec<Vec<Vector3u8>>;
 }

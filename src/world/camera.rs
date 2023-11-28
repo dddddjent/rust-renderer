@@ -8,7 +8,7 @@ pub struct Camera {
     pub up: Vector3f,
     pub distance: f32,
     pub fov: f32,
-    pub size: [u32; 2],
+    pub size: (usize, usize),
 }
 
 impl Camera {
@@ -20,7 +20,7 @@ impl Camera {
             up: Vector3f::zeros(),
             distance: 0f32,
             fov: 0f32,
-            size: [0u32, 0u32],
+            size: (0usize, 0usize),
         }
     }
 }
