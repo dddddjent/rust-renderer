@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use image::{ImageBuffer, ImageFormat, Rgb, RgbImage};
-use log::debug;
+use log::info;
 use serde::{Deserialize, Serialize};
 use simple_math::Vector3u8;
 
@@ -61,24 +61,23 @@ impl Consumer for ImageConsumer {
     }
 
     fn run(&mut self) {
-        let result = self.renderer.step(&self.world);
-
         let camera = match &self.world.camera {
             Some(camera) => camera,
             None => panic!("No camera in the world!"),
         };
-        assert_eq!(camera.size.0, result.len());
-        assert_eq!(camera.size.1, result[0].len());
+        let mut output_buffer = vec![vec![Vector3u8::zeros(); camera.size.1]; camera.size.0];
+        self.renderer.step(&self.world, &mut output_buffer);
+
         let mut img: RgbImage = ImageBuffer::new(camera.size.0 as u32, camera.size.1 as u32);
         for i in 0..camera.size.0 {
             for j in 0..camera.size.1 {
-                let result_pixel: &Vector3u8 = &result[i][j];
+                let result_pixel: &Vector3u8 = &output_buffer[i][j];
                 img[(i as u32, j as u32)] =
                     Rgb([*result_pixel.x(), *result_pixel.y(), *result_pixel.z()]);
             }
         }
 
-        debug!("{}", self.output_path);
+        info!("{}", self.output_path);
         img.save_with_format(&self.output_path[..], self.format)
             .unwrap();
     }

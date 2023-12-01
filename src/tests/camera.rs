@@ -15,14 +15,13 @@ fn deserialize_camera() {
     ";
 
     let camera: Camera = serde_json::from_str(camera_string).unwrap();
-    let camera_result = Camera {
-        position: Vector3f::new([20f32, 5f32, 5f32]),
-        direction: Vector3f::new([-1f32, 0f32, 0f32]),
-        up: Vector3f::new([0f32, 0f32, 1f32]),
-        distance: 1f32,
-        fov: 60f32,
-        size: (1024, 1024),
-    };
+    let mut camera_result = Camera::new();
+    camera_result.position = Vector3f::new([20f32, 5f32, 5f32]);
+    camera_result.direction = Vector3f::new([-1f32, 0f32, 0f32]);
+    camera_result.up = Vector3f::new([0f32, 0f32, 1f32]);
+    camera_result.distance = 1f32;
+    camera_result.fov = 60f32;
+    camera_result.size = (1024, 1024);
     assert_eq!(camera.position, camera_result.position);
     assert_eq!(camera.direction, camera_result.direction);
     assert_eq!(camera.up, camera_result.up);

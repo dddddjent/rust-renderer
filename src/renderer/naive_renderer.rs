@@ -23,18 +23,21 @@ impl Renderer for NaiveRenderer {
         *self = serde_json::from_value(args.clone()).unwrap();
     }
 
-    fn step(&mut self, world: &crate::world::world::World) -> Vec<Vec<simple_math::Vector3u8>> {
-        let camera = match &world.camera {
-            Some(camera) => camera,
-            None => panic!("No camera in the world!"),
-        };
+    fn step(
+        &mut self,
+        _world: &crate::world::world::World,
+        output_buffer: &mut Vec<Vec<simple_math::Vector3u8>>,
+    ) {
         debug!("color: {}", self.color);
-        let mut result = vec![vec![self.color; camera.size.1]; camera.size.0];
-        for i in 30..80 {
-            for j in 60..160 {
-                result[i][j] = Vector3u8::new([0u8, 0u8, 0u8]);
+        for col in output_buffer.iter_mut() {
+            for pixel in col.iter_mut() {
+                *pixel = self.color;
             }
         }
-        result
+        for i in 30..80 {
+            for j in 60..160 {
+                output_buffer[i][j] = Vector3u8::new([0u8, 0u8, 0u8]);
+            }
+        }
     }
 }

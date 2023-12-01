@@ -6,6 +6,7 @@ use crate::consumer::image::ImageConsumer;
 use crate::consumer::Consumer;
 use crate::data_processor::direct::DirectDataProcessor;
 use crate::data_processor::DataProcessor;
+use crate::renderer::basic_path_tracer::BasicPathTracer;
 use crate::renderer::naive_renderer::NaiveRenderer;
 use crate::renderer::Renderer;
 use crate::world::world::World;
@@ -52,17 +53,15 @@ impl Configuration {
 
     pub fn data_process_stage(&self) -> World {
         let mut world = World::new();
-        let mut data_processors: Vec<Box<dyn DataProcessor>> = vec![];
-        for (i, data_processor_configuration) in self.data_processor.iter().enumerate() {
-            match &data_processor_configuration.data_processor_type[..] {
+        // let mut data_processors: Vec<Box<dyn DataProcessor>> = vec![];
+        for data_processor_configuration in &self.data_processor {
+            let mut data_processor = match &data_processor_configuration.data_processor_type[..] {
                 // Add new data processors
-                "direct" => data_processors.push(Box::new(DirectDataProcessor::new())),
+                "direct" => Box::new(DirectDataProcessor::new()),
                 _ => panic!("No such data processor type!"),
             };
             let args = &data_processor_configuration.args;
-            let world_processed = data_processors[i]
-                .process(&self.config_path[..], args)
-                .unwrap();
+            let world_processed = data_processor.process(&self.config_path[..], args).unwrap();
             world.merge_world(world_processed);
         }
         world
@@ -74,8 +73,9 @@ impl Configuration {
             None => panic!("No renderer configuration!"),
         };
 
-        let mut renderer = match &render_configuration.renderer_type[..] {
+        let mut renderer: Box<dyn Renderer> = match &render_configuration.renderer_type[..] {
             "naive_renderer" => Box::new(NaiveRenderer::new()),
+            "basic_path_tracer" => Box::new(BasicPathTracer::new()),
             _ => panic!("No such renderer type!"),
         };
         renderer.set_args(&render_configuration.args);
