@@ -11,7 +11,9 @@ fn deserialize_mesh() {
 				}\
 			}";
 
-    match serde_json::from_str(data_str).unwrap() {
+    let mut m: Mesh = serde_json::from_str(data_str).unwrap();
+    m.get_sphere_mut().unwrap();
+    match m {
         Mesh::Sphere { data } => {
             assert_eq!(data.center, [255f32, 10f32, 88f32]);
             assert_eq!(data.radius, 0.2f32);
