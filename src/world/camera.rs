@@ -8,7 +8,7 @@ pub struct Camera {
     pub up: Vector3f,
     pub distance: f32,
     pub fov: f32,
-    /// In pixel: (height, width)
+    /// In pixel: (width, height)
     pub size: (usize, usize),
 }
 

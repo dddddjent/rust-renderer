@@ -31,7 +31,7 @@ impl Renderer for NaiveRenderer {
         debug!("color: {}", self.color);
         for col in output_buffer.iter_mut() {
             for pixel in col.iter_mut() {
-                *pixel = self.color;
+                *pixel = self.color.clone();
             }
         }
         for i in 30..80 {
