@@ -2,7 +2,10 @@ use rand::rngs::ThreadRng;
 use rand::{thread_rng, Rng};
 use std::f32::consts::PI;
 
+use crate::util::tools::{v3f_to_v3u8, v3u8_to_v3f};
 use crate::world::camera::Camera;
+use crate::world::material::Material;
+use crate::world::world::{World, WorldObject};
 
 use super::{OutputBuffer, Renderer};
 use log::info;
@@ -95,10 +98,43 @@ impl BasicPathTracer {
         self.rng = thread_rng();
     }
 
-    fn trace_each_pixel(&mut self, x: usize, y: usize) -> Vector3u8 {
+    // TODO: return (u,v) of the intersection point
+    /// return: (t, object, normal)
+    fn intersect<'a>(
+        origin: &Vector3f,
+        ray: &Vector3f,
+        world: &'a World,
+    ) -> Option<(f32, &'a WorldObject, Vector3f)> {
+        todo!()
+    }
+
+    // TODO: use (u,v) to compute color from the texture
+    fn compute_color(object: &WorldObject) -> Vector3f {
+        v3u8_to_v3f(match &object.material {
+            Material::Diffuse { data } => &data.color,
+            Material::Specular { data } => &data.color,
+            Material::RoughMetal { data } => &data.color,
+            Material::Dialetric { data } => &data.color,
+            Material::IsotropicLight { data } => &data.color,
+            _ => panic!("Can't deal with this kind of material yet!"),
+        })
+    }
+
+    // TODO: use (u,v) to compute the next ray from the texture
+    /// return: (origin, ray)
+    fn compute_next_ray(object: &WorldObject, normal: &Vector3f) -> (Vector3f, Vector3f) {
+        todo!()
+    }
+
+    #[inline]
+    fn is_light(object: &WorldObject) -> bool {
+        object.material.is_isotropic_light()
+    }
+
+    fn trace_each_pixel(&mut self, x: usize, y: usize, world: &World) -> Vector3u8 {
         let mut pixel_buffer: Vector3f = Vector3f::zeros();
 
-        for i in 0..self.rays_per_pixel {
+        for _ in 0..self.rays_per_pixel {
             if self.rng.gen::<f32>() > self.p_continue {
                 break;
             }
@@ -106,28 +142,41 @@ impl BasicPathTracer {
             let mut ray = self.camera.generate_random_ray(x, y, &mut self.rng);
             let mut color = Vector3f::new([1f32, 1f32, 1f32]);
             let mut origin = self.camera.camera.position.clone();
-            for iter_depth in 0..self.iteration {}
+            for _ in 0..self.iteration {
+                let (_, object, normal) = match Self::intersect(&origin, &ray, world) {
+                    Some(result) => result,
+                    None => break,
+                };
+
+                let color_mask = Self::compute_color(object) / 255f32;
+                color
+                    .iter_mut()
+                    .zip(color_mask.iter())
+                    .for_each(|(val, mask)| *val = *val * mask / self.p_continue);
+                if Self::is_light(object) {
+                    pixel_buffer += color;
+                    break;
+                }
+
+                (origin, ray) = Self::compute_next_ray(object, &normal);
+            }
         }
         pixel_buffer /= self.rays_per_pixel as f32;
         pixel_buffer
             .iter()
             .for_each(|val| assert!(*val < u8::MAX as f32));
-        Vector3u8::new([
-            *pixel_buffer.x() as u8,
-            *pixel_buffer.y() as u8,
-            *pixel_buffer.z() as u8,
-        ])
+        v3f_to_v3u8(&pixel_buffer)
     }
 
     /// The real entry of step
-    fn step_inner(&mut self, world: &crate::world::world::World, output_buffer: &mut OutputBuffer) {
+    fn step_inner(&mut self, world: &World, output_buffer: &mut OutputBuffer) {
         if self.step_count == 0 {
             self.init(world);
         }
         // TODO: consider parallel
         output_buffer
             .iter_2d_mut()
-            .for_each(|(x, y, output_pixel)| *output_pixel = self.trace_each_pixel(x, y));
+            .for_each(|(x, y, output_pixel)| *output_pixel = self.trace_each_pixel(x, y, &world));
         self.step_count += 1;
     }
 }
@@ -137,7 +186,7 @@ impl Renderer for BasicPathTracer {
         self.set_args_inner(args)
     }
 
-    fn step(&mut self, world: &crate::world::world::World, output_buffer: &mut OutputBuffer) {
+    fn step(&mut self, world: &World, output_buffer: &mut OutputBuffer) {
         self.step_inner(world, output_buffer);
     }
 }

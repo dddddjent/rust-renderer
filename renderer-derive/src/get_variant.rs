@@ -37,12 +37,14 @@ pub fn impl_get_variant(ast: DeriveInput) -> TokenStream {
                     let field_ident = fields[0].ident.as_ref().unwrap();
                     let field_ty = &fields[0].ty;
                     get_variant_functions.extend(quote!(
+                        #[inline]
                         pub fn #function_name(&self) -> Result<&#field_ty,String>{
                             match self {
                                 #enum_ident::#variant_ident{#field_ident}=>Ok(#field_ident),
                                 _=>Err(format!("This enum variant is not {}::{}!",#enum_name,#variant_name)),
                             }
                         }
+                        #[inline]
                         pub fn #function_mut_name(&mut self) -> Result<&mut #field_ty,String>{
                             match self {
                                 #enum_ident::#variant_ident{#field_ident}=>Ok(#field_ident),

@@ -5,7 +5,7 @@ use super::mesh::Mesh;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct WorldObjects {
+pub struct WorldObject {
     pub name: String,
     pub mesh: Mesh,
     pub material: Material,
@@ -14,7 +14,7 @@ pub struct WorldObjects {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct World {
     pub camera: Option<Camera>,
-    pub objects: Vec<WorldObjects>,
+    pub objects: Vec<WorldObject>,
 }
 
 impl World {

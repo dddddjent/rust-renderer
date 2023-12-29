@@ -7,12 +7,14 @@ pub struct OutputBuffer {
 }
 
 impl OutputBuffer {
+    #[inline]
     pub fn iter_2d(&self) -> impl Iterator<Item = (usize, usize, &simple_math::Vector3u8)> {
         self.output_buffer
             .iter()
             .enumerate()
             .flat_map(|(x, col)| col.iter().enumerate().map(move |(y, val)| (x, y, val)))
     }
+    #[inline]
     pub fn iter_2d_mut(
         &mut self,
     ) -> impl Iterator<Item = (usize, usize, &mut simple_math::Vector3u8)> {

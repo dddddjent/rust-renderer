@@ -38,7 +38,8 @@ pub fn impl_is_variant(ast: DeriveInput) -> TokenStream {
 
                 // Here we construct the function for the current variant
                 variant_checker_functions.extend(quote_spanned! {variant.span()=>
-                    fn #is_variant_func_ident(&self) -> bool {
+                    #[inline]
+                    pub fn #is_variant_func_ident(&self) -> bool {
                         match self {
                             #enum_ident::#variant_ident #fields_in_variant => true,
                             _ => false,
