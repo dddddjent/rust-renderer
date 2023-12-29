@@ -1,4 +1,4 @@
-use super::Renderer;
+use super::{OutputBuffer, Renderer};
 use crate::world::serde::deserialize_color;
 use log::debug;
 use serde::{Deserialize, Serialize};
@@ -23,21 +23,17 @@ impl Renderer for NaiveRenderer {
         *self = serde_json::from_value(args.clone()).unwrap();
     }
 
-    fn step(
-        &mut self,
-        _world: &crate::world::world::World,
-        output_buffer: &mut Vec<Vec<simple_math::Vector3u8>>,
-    ) {
+    fn step(&mut self, _world: &crate::world::world::World, output_buffer: &mut OutputBuffer) {
         debug!("color: {}", self.color);
-        for col in output_buffer.iter_mut() {
-            for pixel in col.iter_mut() {
-                *pixel = self.color.clone();
+        output_buffer
+            .iter_2d_mut()
+            .for_each(|(_, _, val)| *val = self.color.clone());
+        output_buffer.iter_2d_mut().for_each(|(x, y, val)| {
+            if x >= 30 && x < 100 {
+                if y >= 50 && y < 150 {
+                    *val = Vector3u8::zeros();
+                }
             }
-        }
-        for i in 30..80 {
-            for j in 60..160 {
-                output_buffer[i][j] = Vector3u8::new([0u8, 0u8, 0u8]);
-            }
-        }
+        });
     }
 }

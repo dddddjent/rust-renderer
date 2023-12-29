@@ -4,7 +4,7 @@ use std::f32::consts::PI;
 
 use crate::world::camera::Camera;
 
-use super::Renderer;
+use super::{OutputBuffer, Renderer};
 use log::info;
 use serde::Deserialize;
 use simple_math::{VCross, VNorm, Vector3f, Vector3u8};
@@ -95,41 +95,39 @@ impl BasicPathTracer {
         self.rng = thread_rng();
     }
 
+    fn trace_each_pixel(&mut self, x: usize, y: usize) -> Vector3u8 {
+        let mut pixel_buffer: Vector3f = Vector3f::zeros();
+
+        for i in 0..self.rays_per_pixel {
+            if self.rng.gen::<f32>() > self.p_continue {
+                break;
+            }
+
+            let mut ray = self.camera.generate_random_ray(x, y, &mut self.rng);
+            let mut color = Vector3f::new([1f32, 1f32, 1f32]);
+            let mut origin = self.camera.camera.position.clone();
+            for iter_depth in 0..self.iteration {}
+        }
+        pixel_buffer /= self.rays_per_pixel as f32;
+        pixel_buffer
+            .iter()
+            .for_each(|val| assert!(*val < u8::MAX as f32));
+        Vector3u8::new([
+            *pixel_buffer.x() as u8,
+            *pixel_buffer.y() as u8,
+            *pixel_buffer.z() as u8,
+        ])
+    }
+
     /// The real entry of step
-    fn step_inner(
-        &mut self,
-        world: &crate::world::world::World,
-        output_buffer: &mut Vec<Vec<simple_math::Vector3u8>>,
-    ) {
+    fn step_inner(&mut self, world: &crate::world::world::World, output_buffer: &mut OutputBuffer) {
         if self.step_count == 0 {
             self.init(world);
         }
         // TODO: consider parallel
-        for (x, col) in output_buffer.iter_mut().enumerate() {
-            for (y, output_pixel) in col.iter_mut().enumerate() {
-                let mut pixel_buffer: Vector3f = Vector3f::zeros();
-
-                for i in 0..self.rays_per_pixel {
-                    if self.rng.gen::<f32>() > self.p_continue {
-                        break;
-                    }
-
-                    let mut ray = self.camera.generate_random_ray(x, y, &mut self.rng);
-                    let mut color = Vector3f::new([1f32, 1f32, 1f32]);
-                    let mut origin = self.camera.camera.position.clone();
-                    for iter_depth in 0..self.iteration {}
-                }
-                pixel_buffer /= self.rays_per_pixel as f32;
-                pixel_buffer
-                    .iter()
-                    .for_each(|val| assert!(*val < u8::MAX as f32));
-                *output_pixel = Vector3u8::new([
-                    *pixel_buffer.x() as u8,
-                    *pixel_buffer.y() as u8,
-                    *pixel_buffer.z() as u8,
-                ]);
-            }
-        }
+        output_buffer
+            .iter_2d_mut()
+            .for_each(|(x, y, output_pixel)| *output_pixel = self.trace_each_pixel(x, y));
         self.step_count += 1;
     }
 }
@@ -139,11 +137,7 @@ impl Renderer for BasicPathTracer {
         self.set_args_inner(args)
     }
 
-    fn step(
-        &mut self,
-        world: &crate::world::world::World,
-        output_buffer: &mut Vec<Vec<simple_math::Vector3u8>>,
-    ) {
+    fn step(&mut self, world: &crate::world::world::World, output_buffer: &mut OutputBuffer) {
         self.step_inner(world, output_buffer);
     }
 }
