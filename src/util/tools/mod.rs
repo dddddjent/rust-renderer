@@ -20,3 +20,8 @@ pub fn v3u8_to_v3f(v3u8: &Vector3u8) -> Vector3f {
 pub fn v3f_to_v3u8(v3f: &Vector3f) -> Vector3u8 {
     Vector3u8::new([*v3f.x() as u8, *v3f.y() as u8, *v3f.z() as u8])
 }
+
+#[inline]
+pub const fn ray_collision_epsilon() -> f32 {
+    1e-4
+}

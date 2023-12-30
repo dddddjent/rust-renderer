@@ -1,5 +1,5 @@
 use log::{info, LevelFilter};
-use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+use simplelog::{ColorChoice, ConfigBuilder, TermLogger, TerminalMode};
 
 use self::configuration::Configuration;
 use self::data_processor::direct::DirectDataProcessor;
@@ -16,9 +16,13 @@ mod util;
 mod world;
 
 fn main() {
+    let config = ConfigBuilder::new()
+        .set_time_offset_to_local()
+        .unwrap()
+        .build();
     TermLogger::init(
         LevelFilter::Debug,
-        Config::default(),
+        config,
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )

@@ -1,3 +1,5 @@
+use rayon::iter::{IndexedParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
+
 pub mod basic_path_tracer;
 pub mod naive_renderer;
 
@@ -22,6 +24,19 @@ impl OutputBuffer {
             .iter_mut()
             .enumerate()
             .flat_map(|(x, col)| col.iter_mut().enumerate().map(move |(y, val)| (x, y, val)))
+    }
+    #[inline]
+    pub fn iter_2d_mut_par(
+        &mut self,
+    ) -> impl ParallelIterator<Item = (usize, usize, &mut simple_math::Vector3u8)> {
+        self.output_buffer
+            .par_iter_mut()
+            .enumerate()
+            .flat_map(|(x, col)| {
+                col.par_iter_mut()
+                    .enumerate()
+                    .map(move |(y, val)| (x, y, val))
+            })
     }
 }
 
