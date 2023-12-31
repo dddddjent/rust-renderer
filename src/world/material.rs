@@ -10,7 +10,7 @@ pub enum Material {
     Diffuse { data: Box<DiffuseMaterial> },
     Specular { data: Box<SpecularMaterial> },
     RoughMetal { data: Box<RoughMetalMaterial> },
-    Dialetric { data: Box<DialetricMaterial> },
+    Dielectric { data: Box<DielectricMaterial> },
     IsotropicLight { data: Box<IsotropicLightMaterial> },
 }
 
@@ -34,7 +34,7 @@ pub struct RoughMetalMaterial {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct DialetricMaterial {
+pub struct DielectricMaterial {
     #[serde(deserialize_with = "deserialize_color")]
     pub color: Vector3<u8>,
     pub n: f32,

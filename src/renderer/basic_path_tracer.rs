@@ -7,7 +7,7 @@ use std::f32::consts::PI;
 use crate::util::collision_manager::CollisionManager;
 use crate::util::tools::{ray_collision_epsilon, v3f_to_v3u8, v3u8_to_v3f};
 use crate::world::camera::Camera;
-use crate::world::material::{DialetricMaterial, Material};
+use crate::world::material::{DielectricMaterial, Material};
 use crate::world::world::{World, WorldObject};
 
 use super::{OutputBuffer, Renderer};
@@ -111,7 +111,7 @@ impl BasicPathTracer {
             Material::Diffuse { data } => v3u8_to_v3f(&data.color),
             Material::Specular { data } => v3u8_to_v3f(&data.color),
             Material::RoughMetal { data } => v3u8_to_v3f(&data.color),
-            Material::Dialetric { data } => v3u8_to_v3f(&data.color),
+            Material::Dielectric { data } => v3u8_to_v3f(&data.color),
             Material::IsotropicLight { data } => v3u8_to_v3f(&data.color) * data.brightness,
             _ => panic!("Can't deal with this kind of material yet!"),
         }
@@ -122,11 +122,11 @@ impl BasicPathTracer {
         in_dir + 2f32 * (-in_dir.dot(normal)) * normal
     }
 
-    fn compute_next_ray_dieletric(
+    fn compute_next_ray_dielectric(
         &self,
         ray: &Vector3f,
         normal: &Vector3f,
-        material: &DialetricMaterial,
+        material: &DielectricMaterial,
         rng: &mut ThreadRng,
     ) -> Vector3f {
         let ray_dot_normal = ray.dot(normal);
@@ -201,9 +201,9 @@ impl BasicPathTracer {
                 }
                 (new_origin, new_ray.normalized())
             }
-            Material::Dialetric { data } => (
+            Material::Dielectric { data } => (
                 new_origin,
-                self.compute_next_ray_dieletric(ray, normal, data.as_ref(), rng),
+                self.compute_next_ray_dielectric(ray, normal, data.as_ref(), rng),
             ),
             Material::IsotropicLight { data: _ } => {
                 panic!("If it's IsotropicLight, you shouldn't generate any ray anymore")
