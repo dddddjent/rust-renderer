@@ -29,10 +29,8 @@ impl Renderer for NaiveRenderer {
             .iter_2d_mut()
             .for_each(|(_, _, val)| *val = self.color.clone());
         output_buffer.iter_2d_mut().for_each(|(x, y, val)| {
-            if x >= 30 && x < 100 {
-                if y >= 50 && y < 150 {
-                    *val = Vector3u8::zeros();
-                }
+            if (30..100).contains(&x) && (50..150).contains(&y) {
+                *val = Vector3u8::zeros();
             }
         });
     }

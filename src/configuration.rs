@@ -44,7 +44,7 @@ pub struct Configuration {
 
 impl Configuration {
     pub fn new(config_path: &str) -> Self {
-        let file = File::open(&config_path).unwrap();
+        let file = File::open(config_path).unwrap();
         let reader = BufReader::new(file);
         let mut configuration: Configuration = serde_json::from_reader(reader).unwrap();
         configuration.config_path = String::from(config_path);

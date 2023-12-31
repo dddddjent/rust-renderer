@@ -283,7 +283,7 @@ impl BasicPathTracer {
         // TODO: consider parallel
         output_buffer
             .iter_2d_mut_par()
-            .for_each(|(x, y, output_pixel)| *output_pixel = self.trace_each_pixel(x, y, &world));
+            .for_each(|(x, y, output_pixel)| *output_pixel = self.trace_each_pixel(x, y, world));
         self.step_count += 1;
     }
 }

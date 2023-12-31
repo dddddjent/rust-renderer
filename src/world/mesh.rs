@@ -34,7 +34,7 @@ pub struct SphereMesh {
 impl SphereMesh {
     pub fn intersect(&self, origin: &Vector3f, ray: &Vector3f) -> Option<(f32, Vector3f)> {
         let temp = origin - &self.center;
-        let a = ray.dot(&ray);
+        let a = ray.dot(ray);
         let b = 2f32 * ray.dot(&temp);
         let c = temp.dot(&temp) - self.radius * self.radius;
         let delta = b * b - 4f32 * a * c;
@@ -54,7 +54,7 @@ impl SphereMesh {
             let normal = (origin + t1 * ray - &self.center).normalized();
             return Some((t1, normal));
         }
-        return None;
+        None
     }
 }
 
@@ -74,9 +74,9 @@ impl PlaneMesh {
         let t = -b / a;
 
         if t > ray_collision_epsilon() {
-            return Some((t, self.normal.clone()));
+            Some((t, self.normal.clone()))
         } else {
-            return None;
+            None
         }
     }
 }
@@ -101,9 +101,9 @@ impl CircleMesh {
             return None;
         }
         if (origin + t * ray - &self.center).norm() < self.radius {
-            return Some((t, self.normal.clone()));
+            Some((t, self.normal.clone()))
         } else {
-            return None;
+            None
         }
     }
 }

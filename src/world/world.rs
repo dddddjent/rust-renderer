@@ -19,13 +19,12 @@ pub struct World {
 
 impl World {
     pub fn merge_world(&mut self, mut another_world: World) {
-        match another_world.camera {
-            Some(_) => match self.camera {
+        if another_world.camera.is_some() {
+            match self.camera {
                 Some(_) => panic!("More than one camera for this project"),
                 None => self.camera = another_world.camera,
-            },
-            None => (),
-        };
+            }
+        }
         self.objects.append(&mut another_world.objects);
     }
     pub fn new() -> Self {
